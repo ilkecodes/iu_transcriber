@@ -24,20 +24,23 @@ st.set_page_config(
     layout="wide"
 )
 
-# Özel CSS - Streamlit'in orijinal arka planını koruyoruz
+# Özel CSS - Dark mode desteği ile
 st.markdown("""
 <style>
+/* Butonlar */
 .stButton>button {
-    background-color: #8B1538;
-    color: white;
+    background-color: #8B1538 !important;
+    color: white !important;
     font-weight: bold;
     border-radius: 5px;
     padding: 0.5rem 2rem;
     border: none;
 }
 .stButton>button:hover {
-    background-color: #a01848;
+    background-color: #a01848 !important;
 }
+
+/* Başlık */
 .header-container {
     background: linear-gradient(135deg, #8B1538 0%, #a01848 100%);
     padding: 2rem;
@@ -46,20 +49,39 @@ st.markdown("""
     text-align: center;
     color: white;
 }
+
+/* Info kutucukları - Dark mode uyumlu */
 .info-box {
-    background-color: #f8f9fa;
+    background-color: rgba(139, 21, 56, 0.1);
     padding: 1.5rem;
     border-radius: 10px;
     border-left: 5px solid #8B1538;
     margin: 1rem 0;
 }
+
+/* Transkript kutusu - Dark mode uyumlu */
 .transcript-box {
-    background-color: #f8f9fa;
+    background-color: rgba(139, 21, 56, 0.05);
     padding: 2rem;
     border-radius: 10px;
-    border: 2px solid #dee2e6;
+    border: 2px solid rgba(139, 21, 56, 0.3);
     min-height: 300px;
     font-family: 'Courier New', monospace;
+}
+
+/* Selectbox ve diğer input'lar için dark mode düzeltmesi */
+[data-baseweb="select"] {
+    background-color: transparent !important;
+}
+
+/* File uploader düzeltmesi */
+[data-testid="stFileUploader"] {
+    background-color: transparent !important;
+}
+
+/* Text area düzeltmesi */
+.stTextArea textarea {
+    background-color: rgba(139, 21, 56, 0.05) !important;
 }
 </style>
 """, unsafe_allow_html=True)
