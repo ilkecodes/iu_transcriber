@@ -110,9 +110,12 @@ def load_whisper_model(model_size="base"):
 
 def transcribe_audio(audio_file, language="tr"):
     try:
+        # Model size'ı session state'den al
+        current_model_size = st.session_state.get('model_size', 'base')
+        
         if st.session_state.model is None:
             with st.spinner('🔄 Whisper modeli yükleniyor...'):
-                st.session_state.model = load_whisper_model("base")
+                st.session_state.model = load_whisper_model(current_model_size)
         
         # Dosya uzantısını koru
         file_extension = audio_file.name.split('.')[-1]
