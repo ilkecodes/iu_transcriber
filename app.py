@@ -29,10 +29,11 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main {
-        background-color: #f5f5f5;
+        background-color: #fdfdfd;  /* Açık arka plan */
+        color: #111; /* Temel yazı rengi */
     }
     .stButton>button {
-        background-color: #8B1538;
+        background-color: #005f73;
         color: white;
         font-weight: bold;
         border-radius: 5px;
@@ -40,33 +41,36 @@ st.markdown("""
         border: none;
     }
     .stButton>button:hover {
-        background-color: #a01848;
+        background-color: #0a9396;
     }
     .header-container {
-        background: linear-gradient(135deg, #8B1538 0%, #a01848 100%);
+        background: linear-gradient(135deg, #0a9396 0%, #94d2bd 100%);
         padding: 2rem;
         border-radius: 10px;
         margin-bottom: 2rem;
         text-align: center;
-        color: white;
+        color: #111;
     }
     .info-box {
-        background-color: white;
+        background-color: #ffffff;
         padding: 1.5rem;
         border-radius: 10px;
-        border-left: 5px solid #8B1538;
+        border-left: 5px solid #005f73;
         margin: 1rem 0;
+        color: #111;
     }
     .transcript-box {
-        background-color: white;
+        background-color: #ffffff;
         padding: 2rem;
         border-radius: 10px;
         border: 2px solid #e0e0e0;
         min-height: 300px;
         font-family: 'Courier New', monospace;
+        color: #111;
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 # Başlık
 st.markdown("""
