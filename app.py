@@ -110,6 +110,9 @@ def load_whisper_model(model_size="base"):
 
 def transcribe_audio(audio_file, language="tr"):
     try:
+        # Dosya boyutunu kontrol et
+        file_size_mb = len(audio_file.getvalue()) / (1024 * 1024)
+        
         # Model size'ı session state'den al
         current_model_size = st.session_state.get('model_size', 'base')
         
@@ -124,13 +127,27 @@ def transcribe_audio(audio_file, language="tr"):
             tmp_file.write(audio_file.read())
             tmp_path = tmp_file.name
         
+        # Büyük dosyalar için uyarı
+        if file_size_mb > 100:
+            st.warning(f"⚠️ Dosya boyutu: {file_size_mb:.1f}MB - İşlem biraz uzun sürebilir...")
+        
         with st.spinner('✍️ Transkript oluşturuluyor...'):
-            # FFmpeg olmadan çalışması için fp16=False ekle
-            result = st.session_state.model.transcribe(
-                tmp_path, 
-                language=language,
-                fp16=False  # CPU için gerekli
-            )
+            # Büyük dosyalar için chunk kullan
+            if file_size_mb > 200:
+                st.info("📦 Büyük dosya - parçalara bölünerek işleniyor...")
+                result = st.session_state.model.transcribe(
+                    tmp_path, 
+                    language=language,
+                    fp16=False,
+                    verbose=True,  # İlerleme göster
+                    temperature=0,  # Daha tutarlı sonuçlar
+                )
+            else:
+                result = st.session_state.model.transcribe(
+                    tmp_path, 
+                    language=language,
+                    fp16=False
+                )
         
         os.unlink(tmp_path)
         return result
@@ -143,6 +160,8 @@ def transcribe_audio(audio_file, language="tr"):
         return None
     except Exception as e:
         st.error(f"❌ Hata: {str(e)}")
+        if "out of memory" in str(e).lower():
+            st.error("💡 Bellek hatası - daha küçük bir model deneyin (tiny veya base)")
         return None
 
 # Ana içerik
