@@ -100,6 +100,8 @@ if 'transcript' not in st.session_state:
     st.session_state.transcript = ""
 if 'model' not in st.session_state:
     st.session_state.model = None
+if 'model_size' not in st.session_state:
+    st.session_state.model_size = "base"
 
 # Whisper modelini yükle (cache ile)
 @st.cache_resource
@@ -112,15 +114,30 @@ def transcribe_audio(audio_file, language="tr"):
             with st.spinner('🔄 Whisper modeli yükleniyor...'):
                 st.session_state.model = load_whisper_model("base")
         
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
+        # Dosya uzantısını koru
+        file_extension = audio_file.name.split('.')[-1]
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file_extension}") as tmp_file:
             tmp_file.write(audio_file.read())
             tmp_path = tmp_file.name
         
         with st.spinner('✍️ Transkript oluşturuluyor...'):
-            result = st.session_state.model.transcribe(tmp_path, language=language)
+            # FFmpeg olmadan çalışması için fp16=False ekle
+            result = st.session_state.model.transcribe(
+                tmp_path, 
+                language=language,
+                fp16=False  # CPU için gerekli
+            )
         
         os.unlink(tmp_path)
         return result
+    except FileNotFoundError as e:
+        if 'ffmpeg' in str(e):
+            st.error("❌ FFmpeg bulunamadı! Lütfen FFmpeg'i kurun:")
+            st.code("Windows: choco install ffmpeg\nmacOS: brew install ffmpeg\nLinux: sudo apt install ffmpeg")
+        else:
+            st.error(f"❌ Hata: {str(e)}")
+        return None
     except Exception as e:
         st.error(f"❌ Hata: {str(e)}")
         return None
@@ -165,8 +182,11 @@ with col1:
 with col2:
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown("**Model Boyutu:**")
-    model_size = st.selectbox(
-        "Seçin", ["tiny", "base", "small", "medium"], index=1
+    st.session_state.model_size = st.selectbox(
+        "Seçin", 
+        ["tiny", "base", "small", "medium"], 
+        index=["tiny", "base", "small", "medium"].index(st.session_state.model_size),
+        key="model_size_select"
     )
     if st.button("🔄 Modeli Yenile"):
         st.session_state.model = None
@@ -181,7 +201,7 @@ with col2:
 st.markdown("### 📝 Transkript")
 if st.session_state.transcript:
     st.markdown('<div class="transcript-box">', unsafe_allow_html=True)
-    st.text_area("", st.session_state.transcript, height=400, label_visibility="collapsed")
+    st.text_area("Transkript Metni", st.session_state.transcript, height=400, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 else:
     st.info("👆 Bir ses dosyası yükleyin ve 'Transkript Oluştur' butonuna tıklayın")
