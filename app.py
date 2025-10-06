@@ -24,13 +24,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# Özel CSS
+# Özel CSS - Streamlit'in orijinal arka planını koruyoruz
 st.markdown("""
 <style>
-.main {
-    background-color: #f5f5f5;
-    color: #111111;
-}
 .stButton>button {
     background-color: #8B1538;
     color: white;
@@ -51,19 +47,17 @@ st.markdown("""
     color: white;
 }
 .info-box {
-    background-color: #ffffff;
-    color: #111111;
+    background-color: #f8f9fa;
     padding: 1.5rem;
     border-radius: 10px;
     border-left: 5px solid #8B1538;
     margin: 1rem 0;
 }
 .transcript-box {
-    background-color: #f0f0f0;
-    color: #111111;
+    background-color: #f8f9fa;
     padding: 2rem;
     border-radius: 10px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #dee2e6;
     min-height: 300px;
     font-family: 'Courier New', monospace;
 }
